@@ -31,3 +31,4 @@ asypow.power <- function(asypow.obj, sample.size, significance) {
       }
       return(power)
 }
+

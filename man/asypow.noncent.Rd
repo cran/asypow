@@ -35,8 +35,6 @@
                (1) Value to which parameter is set
                (2) Index of other of two parameters
                    to be set equal
-
-
 }
 \item{nobs.ell}{
    The number of observations used in computing the information
@@ -44,14 +42,13 @@
    Default is 1, which is the correct value for all of the 'info.'
    routines supplied here.
 }
-\item{ get.ho}{
+\item{get.ho}{
    If TRUE, estimates of the parameter values under the null
    hypothesis are calculated and returned, otherwise not.
    Default is TRUE.
-}}
+}}%end \arguments
 \value{
    Returns a list including
-}
 \item{w}{
      The noncentrality parameter for 1 observation.
 }
