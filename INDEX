@@ -1,0 +1,26 @@
+asypow.n                Asymptotic Sample Size
+asypow.noncent          Asymptotic Noncentrality Parameter
+asypow.power            Asymptotic Power
+asypow.sig              Asymptotic Significance
+info.binomial.design    Expected Information Matrix for a Binomial
+                        Design
+info.binomial.kgroup    Expected Information Matrix for Single or
+                        Multiple Group Binomial
+info.expsurv.design     Expected Information Matrix for a Clinical
+                        Trial with Exponential Survival Design
+info.expsurv.kgroup     Expected Information Matrix for a Single or
+                        Multiple Group Clinical Trial with Exponential
+                        Survival
+info.mvlogistic         Expected Information Matrix for a Multivariate
+                        Logistic Model
+info.mvloglin           Expected Information Matrix for a Multivariate
+                        Log-Linear Model
+info.ordinal.design     Expected Information Matrix for an Ordinal
+                        Design
+info.ordinal.kgroup     Expected Information Matrix for Single or
+                        Multiple Group Ordinal Observations
+info.poisson.design     Expected Information Matrix for a Poisson
+                        Design
+info.poisson.kgroup     Expected Information Matrix for Single or
+                        Multiple Group Poisson
+info.reparam            Reparameterize Expected Information Matrix

@@ -1,0 +1,24 @@
+Asypomptotic Likelihood Ratio Routines:
+
+I. Routines That Calculate Information Matrices
+   A. Parameters for k-groups
+      info.binomial.kgroup, info.poisson.kgroup,
+      info.ordinal.kgroup and info.expsurv.kgroup
+   B. Coefficients of a Single Covariate in a Designed Experiment
+      info.binomial.design, info.poisson.design,
+      info.ordinal.design and info.expsurv.design
+   C. Multiple Covariates
+      info.mvlogistic and info.mvloglin
+   D. Model Reparameterization
+      info.reparam
+II. Routine that Computes Noncentrality Parameter from the Information
+    Matrix and the Set of Constraints that Yield the Null Hypothesis          
+    A. asypow.noncent
+III. Routines that Calculate Planning Parameters from Noncentrality
+     Parameter
+    A. Calculate power given significance level, sample size
+       asypow.power
+    B. Calculate sample size, given significance level, power
+       asypow.n
+    C. Calculate signficance level given sample size, power
+       asypow.sig

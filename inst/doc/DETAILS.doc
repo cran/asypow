@@ -1,0 +1,359 @@
+Asymptotic Likelihood Ratio Routines:
+
+This file contains the mathematical details of each routine in the 
+asypow library.
+
+I. Routines That Calculate Information Matrices
+   A. Parameters for k-groups
+
+      (This presentation follows Cox and Hinkley.)
+
+      Let the vector y be a realization of independent, identically
+      distributed random variables, Y, with density f(y;theta)
+      where theta is a vector of unknown parameters. The log likelihood
+      of the observations, y given the parameters theta is
+
+      l(y;theta) = sum of log(f(y[l];theta)) l = 1,...,n
+
+      Let theta.ha denote the alternative hypothesis value of theta.
+      Let i denote the expected information matrix. Then i[j,k] is
+      defined as the negative of the sum from l = 1,...,n of the
+      expectation over theta.ha of the second partial derivative of 
+      l(Y[l];theta) with respect to [j,k].
+
+      -i[j,k] = sum of E_theta.ha[d^2 l(Y[l];theta)/d{theta[j]}d{theta[k]}]
+                for l = 1,...,n
+
+      There are four different routines which calculate the information
+      matrix for k groups.
+      
+      1. info.binomial.kgroup - Binomial Distribution
+
+         For a binomial distribution with only 1 group, the only
+         parameter of the model is the probability of an event, p,
+         so the information matrix is a scaler. For a single observation,
+         the log likelihood is log(p) if the event occurs and
+         log(1-p) if the event does not occur. Therefore:
+
+         i = -[p*d^2{log(p)}/dp^2 + (1-p)*d^2{log(1-p)}/dp^2]
+           = 1/(p*(1-p))
+
+         For the binomial case with k groups, the information matrix
+         is a diagonal matrix with the [k,k] element being 
+
+         i[k,k] = 1/(p[k]*(1-p[k]))
+
+         The [k,k] element of the information matrix is scaled by the 
+         percentage of observation in that group.
+
+      2. info.poisson.kgroup - Poisson Distribution
+
+         For a Poisson distribution with only 1 group, the only
+         parameter of the model is the mean, lambda,
+         so the information matrix is a scaler. The probability
+         that j events occur in a single observation from a
+         Poisson process with mean lambda is
+
+         f(j) = (lambda^j)*exp(-lambda)/(lambda!) and
+         d^2{log(f(j))}/d{lambda^2} = -j/lambda^2
+
+         Since the number of events, j, is distributed Poisson
+         the expectation of j is lambda. Hence, the information
+         matrix is
+
+         i = 1/lambda
+
+         For the Poisson case with k groups, the information matrix
+         is a diagonal matrix with the [k,k] element being 
+
+         i[k,k] = 1/(lambda[k])
+
+         The [k,k] element of the information matrix is scaled by the 
+         percentage of observation in that group.
+
+      2. info.ordinal.kgroup - Ordered Category Multinomial Distribution
+
+         For an ordered category multinomial distribution with
+         only 1 group and r categories, the parameter of the model
+         is a vector p of length (r-1) where
+
+         p[j] = prob(event occurred in category j or less)
+
+         so the information matrix is (r-1)x(r-1).  For a single
+         observation, the log likelihood is the sum over all
+         the categories of the expected number of observations
+         in each category (i.e. the probability of an event occurring
+         in that category) times the log of the probability
+         of an event occurring in that category.
+
+         ll = sum of {prob[j]*log(prob[j])} j = 1,...,r
+         prob[j] = p[j] - p[j-1] where p[0] = 0 and p[r] = 1
+
+         The non-zero element of the information matrix are:
+
+         i[m,m] = 1/(p[m] - p[m-1]) + 1/(p[m+1] - p[m])
+         i[m,m+1] = -1/(p[m] - p[m+1])
+         i[m+1,m] = i[m,m+1]
+
+         For the ordinal case with k groups, the information matrix
+         is ((r-1)*k)x((r-1)*k). If i[j] is the information matrix
+         for group j scaled by the percentage of observations in
+         that group, then i is a matrix with i[j] j = 1,...,k
+         along the diagonals and 0 everywhere else.
+
+      4. info.expsurv.kgroup - Clinical Trial with Exponential Survival
+
+         Consider a clinical trail with only 1 group. 
+         The clinical trail will accrue subjects over a time period L.
+         Each subject will enter the study at a random time between 0 
+         and L, so the subject's follow up time, U, will be uniformly
+         distributed between 0 and L. A subject with follow up
+         time U, can die at a time t between 0 and U, or the subject can
+         be withdrawn alive at time U. The density of time to death
+         is the exponential distribution with hazard, w, w*exp(-w*t).
+
+         The logarithm of this value is the contribution to the
+         log-likelihood of a death at time t. The second derivative
+         of the log likelihood with respect to w is -1/w^2. To obtain
+         the expected contribution of the failure to the information,
+         -1/w^2 must be integrated twice. First it is multiplied by the
+         probability of death at t and then integrated with respect to t
+         from 0 to U. Since U if uniformly distributed on 0 to L, this
+         result is then integrated over U from 0 to L and multiplied by
+         1/L (the uniform density). The result, negated to be a contribution
+         to the information matrix, is
+
+         i = ((exp(-L*w) - 1) + L*w)/(L*w^3)
+
+         Should the subject not fail, he will be censored at the end of the
+         study, i.e., at time U. The probability of this is exp(-w*U).
+         The logarithm of this expression is the contribution of the
+         censored observation to the log likelihood, -w*U. Differentiating
+         twice with respect to w gives 0 so the contribution of
+         a censored observation to the information is 0.
+
+         For the case with k groups, the information matrix
+         is a diagonal matrix with the [k,k] element being the information
+         from group k. The [k,k] element of the information matrix is 
+         scaled by the percentage of observation in that group.
+
+   B. Coefficients of a Single Covariate in a Designed Experiment
+
+      The asypow routines info.binomial.design, info.poisson.design,
+      info.ordinal.design and info.expsurv.design calculate the
+      expected information matrix in a designed experiment.
+
+      Popular likelihood based models posit that the parameter of the
+      distribution of the output, y, depends on covariates, x, through
+      model parameters, a,b,c,.... A linear combination of the
+      covariates is widely used to model this dependence. For example,
+      let
+
+      u = a + b*x + c*x^2
+
+      The asypow routines allow for a linear or quadratic combination.
+      In the case of info.ordinal.design which calculates the information
+      matrix for a ordered category multinomial distribution there
+      is a combination for each category.
+
+      u[j] = a[j] + b[j]*x + c[j]*x^2  j=1,...,r-1.
+
+      Regression models posit that the parameter or parameters of the
+      distribution depend is a function of the linear combination
+      of the covariates. The function which ties u to the value
+      of the parameter is called a "link" function. Different link
+      functions are appropriate depending on the data.
+
+      1. info.binomial.design - Binomial Distribution
+
+      
+         For binomial data a logistic or complementary log link are
+         natural. The logistic regression model for binomial data posits
+         that the probability of response at covariate value, x, is
+
+         p(x) = exp(u)/(1+exp(u))
+
+         The complementary log regression model for binomial data 
+         posits that the probability of response at x is
+
+         p(x) = 1 - exp(-exp(u))
+
+      2. info.poisson.design - Poisson Distribution
+
+         For Poisson data, a natural model posits that the mean of the
+         Poisson distribution at x is exp(u).
+
+         lambda(x) = exp(u)
+
+      3. info.ordinal.design - Ordered Category Multinomial Distribution
+
+         The logistic regression model for ordinal data with r
+         categories posits that p[j], the probability of an event in
+         category j or less, at covariate value x, p[k](x), is
+
+         p[j](x) = exp(u[j])/(1+exp(u[j]))
+
+         The complementary log regression model posits that
+
+         p[j](x) = 1 - exp(-exp(u[j]))
+
+      4. info.expsurv.design - Clinical Trial with Exponential Survival
+
+         For a clinical trail, a natural model posits that the hazard of
+         the survival distribution is
+
+         w(x) = exp(u)
+
+      Let theta(x) express the dependence of the distributional
+      parameters of the model on the covariate x. Let the contribution
+      to the log-likelihood at a single observation, x, be
+
+      l(y;theta(x)) = log(f(y;theta(x))) so
+      d{l(y;theta(x))}/d{a} = d{l(y;theta(x))}/d{theta(x)} *
+                                   d{theta(x)}/d{a}
+      d^2{l(y;theta(x))}/d{a^2} = d^2{l(y;theta(x))}/d{theta(x)^2} *
+                                       (d{theta(x)}/d{a})^2
+                                + d{l(y;theta(x))}/d{theta(x)} *
+                                        d^2{theta(x)}/d{a^2}
+
+      E[d{l(y;theta(x))}/d{theta(x)}] = 0 because the expectation of
+      the log likelihood is zero at the true parameter values. Because
+      of this and because d^2{theta(x)}/d{a^2} does not depend on y,
+      the second term in the above summation is 0. 
+
+      Other values in the information matrix can be calculated in a similar
+      manner. The above calculation provides the expected contribution
+      to the information of a single observation, but different observations
+      provide different expected contributions because x differs from
+      observation to observation.  Consequently, we must average the
+      contribution over the various x values.  For discretely valued x,
+      let g(x[i]) be the proportion of observations at covariate value
+      x[i]. If this proportion is fixed by the experimental design g
+      should reflect the design; if the proportion is observed then its
+      expectation should be used for g.   The contribution to the
+      information is
+      
+      i[a,b] = sum of g(x[i]) * i(theta(x[i])) * 
+                      d{theta(x[i])}/d{a} * d{theta(x[i])}/d{b}
+                  i = 1,...,n where n is the number of covariates
+
+      The asypow routines will calculate these averages for you.
+      If x is distributed continuously with density g(x), the summation
+      is replaced with an integral
+
+      i[a,b] = integral over x of [i(theta(x[i])) * 
+                 d{theta(x[i])}/d{a} * d{theta(x[i])}/d{b} * g(x)] dx
+
+      In this case you will need to use a numerical integration routine
+      along with the asypow routines to calculate i. (See our integrate
+      S library for numerical integration routines if you need them.)
+
+   C. Multiple Covariates
+
+      1. info.mvlogistic
+
+         Calculates the expected information matrix for a multivariate
+         logistic model where the parameter p, probability of an event,
+         depends on the covariates, x = c(x[1], x[2], ..., x[n]), 
+         through a logistic, p = exp(u)/(1+exp(u)), model. 
+         The variable u is a linear combination of the covariates via a
+         set of coefficients, coef = c(coef[1], coef[2], ..., coef[n]),
+         u = Sum (coef[i] * x[i]) i = 1, ... ,n.
+
+      2. info.mvlogin
+
+         Calculates the expected information matrix for a multivariate
+         log-linear model where the parameter p, probability of an event,
+         depends on the covariates, x = c(x[1], x[2], ..., x[n]), 
+         through an exponential, p = exp(u).
+         The variable u is a log-linear combination of the covariates via 
+         a set of coefficients, coef = c(coef[1], coef[2], ..., coef[n]),
+         u = Sum (log(coef[i]) * x[i]) i = 1, ... ,n.
+
+      These functions are useful for calculations involving data to be
+      tabulated. The calculation of the information matrix is done in
+      the same fashion as those for designed experiments. (See section
+      I. B. above)
+
+   D. Model Reparameterization
+      
+      The function info.reparam calculates the information matrix
+      for a reparameterized model using the information matrix of
+      the original model.
+
+      The method of propagation of error (or delta method) provides a means
+      of calculating the information matrix for a transformed set of
+      parameters from the information matrix in the original parameters.
+      An excellent discussion of the method is found in Bishop [Chapter 14]
+      and the subject is discussed in most advanced texts on statistics.
+
+      Let the original parameterization be in terms of a vector theta of
+      length p. The thetas will be transformed into a vector roe where each
+      element of roe is a function of the thetas. 
+
+      roe[i] = f.i(theta) i = 1,...,p
+
+      The matrix of derivatives of roe with respect to theta is of dimension
+      (p x p) and is defined by:
+
+      d{roe}/d{theta}[i,j] = d{f.i(theta)}/d{theta[j]}
+
+      The result of the propagation of error is that if the variance of
+      theta is Psi(theta) then the variance of roe is
+
+      Var(roe) = (d{roe}/d{theta})*Psi(theta)*t(d{roe}/d{theta})
+
+      The information matrix is the inverse of the variance,
+
+      Inf(roe) = Var(roe)^-1
+
+II. Routine that Computes Noncentrality Parameter from the Information
+    Matrix and the Set of Constraints that Yield the Null Hypothesis
+
+    The asypow.noncent routine calculates noncentrality parameter,
+    degrees of freedom and parameter value estimates under the null
+    hypothesis for a given test via likelihood ratio methods.
+    The output from asypow.noncent is required by asypow.power,
+    asypow.n and asypow.sig.
+
+    Let theta be the vector of parameters for the distribution.
+    The null hypothesis determines the values of specific components of
+    theta which is partitioned into [psi,lambda], where the first
+    set of parameter values, psi, have been set by the null hypothesis
+    to the value psi.not.  The remaining parameters, lambda, are not
+    constrained by the null hypothesis.
+
+    The expected information matrix, i, is partitioned in correspondence
+    to theta into [i[psi,psi], i[psi,lambda]; i[lambda,psi], 
+    i[lambda,lambda]]. Let theta.hat be the maximum likelihood estimate
+    of theta assuming the alternative hypothesis, theta.hat.not be the
+    value that maximizes the likelihood subject to psi = psi.not, and
+    psi.ha be the value of psi under the alternative hypothesis.
+    The result central to LR power and sample-size calculations
+    is the following.
+
+    The asymptotic distribution of 2*[l(theta.hat) - l(theta.hat.not)]
+    is noncentral Chi-Square with noncentrality parameter
+
+    t([psi.ha - psi.not]) * 
+        [i[psi,psi] - i[psi,lambda] * Inverse(i[lambda,lambda]) * 
+        i[lambda,psi]] * [psi.ha - psi.not]
+
+    and degrees of freedom equal to the number of elements in psi.not.
+
+III. Routines that Calculate Planning Parameters from Noncentrality
+     Parameter
+    A. asypow.power - Calculate power given significance level, sample size
+    B. asypow.n - Calculate sample size, given significance level, power
+    C. asypow.sig - Calculate significance level given sample size, power
+
+    See section II. above for an explanation of these three functions.
+
+IV. References
+
+    A. Cox, D.R. and Hinkley, D.V. (1974).
+       _Theoretical Statistics_ Chapman and Hall, London.
+
+    B. Bishop, Y.M., Fienberg, S.E., and Holland, P.W. (1975)
+       _Discrete Multivariate analysis: Theory and Practice_
+       MIT Press, Cambridge, Mass.

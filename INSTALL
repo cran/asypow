@@ -1,0 +1,211 @@
+ASYPOW
+Version 1.0 - November 1994
+
+
+                              INTRODUCTION
+
+This section provides a set of routines written in the S language
+that calculate power and related quantities utilizing asymptotic
+likelihood ratio methods. The following routines are included:
+
+I. Routines That Calculate Information Matrices
+   A. Parameters for k-groups
+      info.binomial.kgroup, info.poisson.kgroup,
+      info.ordinal.kgroup and info.expsurv.kgroup
+   B. Coefficients of a Single Covariate in a Designed Experiment
+      info.binomial.design, info.poisson.design,
+      info.ordinal.design and info.expsurv.design
+   C. Multiple Covariates
+      info.mvlogistic and info.mvloglin
+   D. Model Reparameterization
+      info.reparam
+II. Routine that Computes Noncentrality Parameter from the Information
+    Matrix and the Set of Constraints that Yield the Null Hypothesis          
+    A. asypow.noncent
+III. Routines that Calculate Planning Parameters from Noncentrality
+     Parameter
+    A. Calculate power given significance level, sample size
+       asypow.power
+    B. Calculate sample size, given significance level, power
+       asypow.n
+    C. Calculate significance level given sample size, power
+       asypow.sig
+
+                             INSTALLATION
+
+***************************************************************************
+FORTRAN SOURCE
+
+The FORTRAN source code is located in the file cdfchn.f.
+
+Look at the machine specific constants in the function ipmpar.
+This function is located at the beginning of the cdfchn.f file.
+The set of constants appropriate to your machine should be uncommented
+and all others commented out.  As this file is distributed, the
+constants for IEEE arithmetic are selected.
+
+The source files should be compiled into an object file.
+
+Before using the asypow.n, asypow.power or asypow.sig S functions,
+the object file (called cdfchn.o) must be loaded into S.
+
+***************************************************************************
+LOADING THE OBJECT FILE
+
+You will need to edit the file cdfchn.S which contains the line
+
+# **** cdfchn should be loaded before the next statement ****
+
+This line should be removed and replaced depending on how
+you choose to load the file. There are several options for loading
+the object file into S:
+
+   (1) You can manually load the object file before you call the
+       asypow.n, asypow.sig or asypow.power functions for the
+       first time in any S session. This can be done in the .First
+       function.
+   (2) You can put the appropriate load commands in the cdfchn
+       function. You will want to write a function which checks
+       to see if the object code is already loaded. If you load
+       the object code multiple times S will use a large amount
+       of memory.
+   (3) You can install all of the S functions in a library and
+       use the .First.lib function or the library.dynam function
+       to load the object code.
+
+How you load the files is largely system dependent. On our system
+using S-plus 3.0, the following commands work for each of the
+above cases.
+
+   (1) dyn.load("cdfchn.o")
+   (2) if (!is.loaded("cdfchn")) dyn.load("cdfchn.o")
+   (3) library.dynam("asypow","cdfchn.o")
+
+***************************************************************************
+S CODE
+
+The files named *.S contain the S code for the asypow functions. They
+can be loaded in S with the following command:
+   source("SOURCE")
+
+***************************************************************************
+HELPFILE
+
+The files names *.d contain the help files for the asypow functions.
+The should be placed in the directory .Data/.Help without the `.d'
+extension. This assumes your system reads help files using some form
+of nroff.
+
+***************************************************************************
+LIBRARY
+
+If many users on a system are going to be using the asypow functions,
+you may want to install them as a library. To do this 
+(NOTE: The following instructions are for S or S-plus on a UNIX system)
+
+1. Locate the S code. This can be done using the following command
+   inside S:
+      getenv('SHOME')
+   On our system this is /usr/splus
+2. Change directories to the directory containing the S home files.
+      cd /usr/splus
+3. Change directories to the library directory.
+      cd library
+4. Make a directory called asypow.
+      mkdir asypow
+5. Change directories into the new asypow directory.
+      cd asypow
+6. Copy ALL of the asypow files to the asypow directory.
+7. Compile the FORTRAN code in the file cdfchn.f into object code
+   named cdfchn.o. On many UNIX systems this can be done with the
+   following command
+      f77 -c cdfchn.f
+   This step depends on your system.
+8. Execute the following commands in the asypow directory.
+      mv library.README README
+      mkdir .Data
+      mkdir .Data/.Help
+      source MOVEHELP
+9. Determine if your version of S supports the .First.lib library feature.
+   If you are not sure try getting help on the library command from within
+   S. This can be done using the following command inside S:
+      help("library")
+   
+   If so execute the following command inside S:
+      source("First.lib")
+
+   If your version of S does not support the .First.lib library feature,
+   edit the file cdfchn.S. Replace the line
+
+# **** cdfchn should be loaded before the next statement ****
+
+   with the line
+
+   library.dynam("asypow","cdfchn.o")
+
+   Step 9 may depend on your system and version of S.
+   Check your local manuals for help if the above commands do not work.
+9. Execute the following command inside S:
+      source("SOURCE")
+
+Now if a user who wants to use the asypow function would execute
+the following S command once per session.
+   library("asypow")
+
+                              LEGALITIES
+
+Code that appeared  in an    ACM  publication  is subject  to    their
+algorithms policy:
+
+     Submittal of  an  algorithm    for publication  in   one of   the  ACM
+     Transactions implies that unrestricted use  of the algorithm within  a
+     computer is permissible.   General permission  to copy and  distribute
+     the algorithm without fee is granted provided that the copies  are not
+     made  or   distributed for  direct   commercial  advantage.    The ACM
+     copyright notice and the title of the publication and its date appear,
+     and  notice is given that copying  is by permission of the Association
+     for Computing Machinery.  To copy otherwise, or to republish, requires
+     a fee and/or specific permission.
+
+     Krogh, F.  Algorithms  Policy.  ACM  Tran.   Math.  Softw.   13(1987),
+     183-186.
+
+The asypow routines was written by members of the Section of Computer
+Science, Department of Biomathematics, University of Texas M. D.
+Anderson Cancer Center in Houston.
+
+We place the code that we have written in the public domain.  
+
+DISCLAIMER: Although care was taken in the creation and testing of
+this system, any user employs it at his own risk. Neither the authors
+nor the University of Texas assumes any legal responsibility for the
+correct functioning of the system.
+
+
+                        CONTACTING THE AUTHORS
+
+Please send comments, etc. to
+
+kruss@odin.mda.uth.tmc.edu.
+
+
+                          OBTAINING ASYPOW
+
+The file is available by anonymous ftp from odin.mda.uth.tmc.edu
+(129.106.3.17) in
+         /pub/S/asypow.shar.Z
+
+The code will be submitted to statlib.
+
+
+                                       Barry W. Brown
+                                       Department of Biomathematics, 
+                                            Box 237
+                                       University of Texas M. D.
+                                            Anderson Hospital
+                                       1515 Holcombe Blvd
+                                       Houston, TX 77030
+
+bwb@odin.mda.uth.tmc.edu
+internet address is (129.106.3.17)
+
