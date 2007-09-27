@@ -45,7 +45,7 @@ info.ordinal.design <- function(model="linear", link="logistic", theta,
                 natx <- matrix(natx,ngroups,dimp[2],byrow=TRUE)  else {
                 if (length(natx) != dimp[2] )
                      stop ("length of natx must match number of xpoints")
-                natx <- matrix(natx,ngroups,dimp[2],byrow=T)
+                natx <- matrix(natx,ngroups,dimp[2],byrow=TRUE)
            }
            dimn <- dim(natx)
       } else {
