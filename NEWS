@@ -4,4 +4,9 @@ asypow_2012.04-1
 2012.04-1:
      New file NEWS
      New file NAMESPACE
+2013.09-1
+     License: field in file DESCRIPTION changed as by CRAN maintainer request
+
+
+
 
