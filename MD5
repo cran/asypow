@@ -1,9 +1,9 @@
-42f4581b628b65f14dfd35b106ab5cf4 *DESCRIPTION
+084b0177770190fad519efcbd6fd3d76 *DESCRIPTION
 b0a36e3f67a1f61083af581f81b30760 *INDEX
 109e3c585ff65660ff4c8d165724f678 *INSTALL
 a6695d1a391140590896763485f56b8c *LICENSE
 32b5a8b410ca7ff8cb20e8225a985ebc *NAMESPACE
-118c9a9be1a406e064e09503daf63918 *NEWS
+236cb3d1a92d0f737c7d664b434dea6c *NEWS
 4ec23fd97cf174ee86387c4706a72232 *R/asypow.constraints.R
 c0792046cd94258899b5db16c7d8cb89 *R/asypow.construct.a.R
 51996472ad2224c422705e71af7c2f0d *R/asypow.n.R
@@ -34,10 +34,10 @@ aa6b79bfa79a17dc9bcdca8ecc886abc *R/k.blocks.R
 91e436974a4e45d8d77691c7c16fecce *R/k.blocks.info.R
 d90a205f589540e577bd1222cb3732e1 *R/logit.R
 92dc450f38705faeecab694905c2fe39 *R/transform.phi.R
+2ead2a48fa1cf919512aa449ad498dc7 *README
 43ab5ee980647e8269913cd024b39efb *inst/doc/DETAILS.doc
-279d8d2276a009a1c437053227ad8683 *inst/doc/asypow.pdf
-0b5498c4917e6e5be89430438dfb90b3 *inst/doc/asypow.statlib.pdf
-2ead2a48fa1cf919512aa449ad498dc7 *library.README
+c4d1a2c22bd33647dcee1e148dec99e1 *inst/doc/asypow.pdf
+d5b2119b60f3914e4079599a14b9e309 *inst/doc/asypow.statlib.pdf
 9d9974d2be52f0dfbd4160a0f6c00b2b *man/asypow-internal.Rd
 0cab0d01711cf27b1ff1da7e44130142 *man/asypow.n.Rd
 aec5357396fa554c5fb5ff425f575944 *man/asypow.noncent.Rd
